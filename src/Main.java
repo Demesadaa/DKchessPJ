@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.util.List;
 
-
 import model.Board;
 import model.Move;
 import model.MoveInterpreter;
@@ -11,24 +10,35 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        if (args.length == 0) {
-            System.err.println("Usage: java Main <path_to_pgn_file>");
+
+        String filePath = null;
+
+        try (Scanner scanner = new Scanner(System.in)) {
+            System.out.print("Please enter the absolute path to the PGN file: ");
+            filePath = scanner.nextLine();
+        }
+
+        if (filePath == null || filePath.trim().isEmpty()) {
+            System.err.println("Error: No file path entered. Exiting.");
             return;
         }
-        String filePath = args[0];
 
-        System.out.println("Reading PGN file: " + filePath);
+
+
+        System.out.println("Attempting to read PGN file: " + filePath);
 
         List<String> gameStrings;
         try {
             gameStrings = PgnReader.readGamesFromFile(filePath);
             System.out.println("Found " + gameStrings.size() + " game(s) in the file.");
         } catch (IOException e) {
-            System.err.println("Error reading PGN file: " + e.getMessage());
+            System.err.println("Error reading PGN file '" + filePath + "': " + e.getMessage());
+            System.err.println("Please check if the path is correct and the file exists and is readable.");
             return;
         } catch (Exception e) {
             System.err.println("An unexpected error occurred during file reading: " + e.getMessage());
@@ -74,7 +84,7 @@ public class Main {
                         } catch (Exception e) {
                             System.err.println("!!! CRITICAL ERROR: Applying interpreted move failed during interpretation step for move " + (i+1) + " ('" + pgnMove + "'): " + e.getMessage());
                             e.printStackTrace();
-                            System.err.println("Board state before failed application:\n" + interpretationBoard); // Log board state
+                            System.err.println("Board state before failed application:\n" + interpretationBoard);
                             game.setLogicalError("Internal error applying interpreted move '" + pgnMove + "': " + e.getMessage(), i);
                             interpretationFailed = true;
                             break;

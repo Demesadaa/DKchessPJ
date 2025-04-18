@@ -1,4 +1,4 @@
-package utils;
+
 
 import model.Board;
 import model.Color;

@@ -47,6 +47,17 @@ public class Position {
         return "" + file + rank;
     }
 
+
+    public char getFileChar() {
+        if (col < 0 || col > 7) throw new IllegalStateException("Invalid column index: " + col);
+        return (char) ('a' + col);
+    }
+
+    public char getRankChar() {
+        if (row < 0 || row > 7) throw new IllegalStateException("Invalid row index: " + row);
+        return (char) ('1' + row);
+    }
+
     public static Position fromAlgebraic(String alg) {
         if (alg == null || alg.length() != 2) {
             throw new IllegalArgumentException("Invalid algebraic notation: " + alg);

@@ -1,0 +1,12 @@
+# PGN File Validator by Demetre Kanachadze
+
+
+People save chess games in text files using a format called PGN.
+
+
+Sometimes, PGN files have mistakes.
+This program, written in Java by me (Demetre Kanachadze), reads PGN files.
+It checks them carefully to find any mistakes according to the PGN rules.
+This helps make sure the chess game information is correct.
+
+To run this programm, you shoulda run code and then in terminal paste an absolute path of PGN file saved in your memory disk.

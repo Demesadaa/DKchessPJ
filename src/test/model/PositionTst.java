@@ -1,111 +1,143 @@
 package test.model;
 
+import model.Position;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class PositionTst {
 
     @Test
     void constructorValid() {
-        // Test creation with valid coordinates
+        Position pos = new Position(3, 5);
+        assertEquals(3, pos.getRow());
+        assertEquals(5, pos.getCol());
     }
 
     @Test
     void constructorInvalidRowLow() {
-        // Test creation with row < 0 throws exception
+        assertThrows(IllegalArgumentException.class, () -> new Position(-1, 4));
     }
 
     @Test
     void constructorInvalidRowHigh() {
-        // Test creation with row > 7 throws exception
+        assertThrows(IllegalArgumentException.class, () -> new Position(8, 4));
     }
 
     @Test
     void constructorInvalidColLow() {
-        // Test creation with col < 0 throws exception
+        assertThrows(IllegalArgumentException.class, () -> new Position(2, -1));
     }
 
     @Test
     void constructorInvalidColHigh() {
-        // Test creation with col > 7 throws exception
+        assertThrows(IllegalArgumentException.class, () -> new Position(2, 8));
     }
 
     @Test
     void getRow() {
-        // Test getter returns correct row
+        Position pos = new Position(6, 2);
+        assertEquals(6, pos.getRow());
     }
 
     @Test
     void getCol() {
-        // Test getter returns correct col
+        Position pos = new Position(4, 7);
+        assertEquals(7, pos.getCol());
     }
 
     @Test
     void equalsSameObject() {
-        // Test equality with itself
+        Position pos = new Position(2, 3);
+        assertEquals(pos, pos);
     }
 
     @Test
     void equalsEqualObjects() {
-        // Test equality with another Position of same coords
+        Position p1 = new Position(5, 2);
+        Position p2 = new Position(5, 2);
+        assertEquals(p1, p2);
+        assertEquals(p1.hashCode(), p2.hashCode());
     }
 
     @Test
     void equalsDifferentRow() {
-        // Test inequality with different row
+        Position p1 = new Position(5, 2);
+        Position p2 = new Position(4, 2);
+        assertNotEquals(p1, p2);
     }
 
     @Test
     void equalsDifferentCol() {
-        // Test inequality with different col
+        Position p1 = new Position(5, 2);
+        Position p2 = new Position(5, 1);
+        assertNotEquals(p1, p2);
     }
 
     @Test
     void equalsNull() {
-        // Test inequality with null
+        Position pos = new Position(3, 3);
+        assertNotEquals(pos, null);
     }
 
     @Test
     void equalsDifferentClass() {
-        // Test inequality with object of different type
+        Position pos = new Position(3, 3);
+        assertNotEquals(pos, "not a position");
     }
 
     @Test
     void hashCodeConsistent() {
-        // Test hashcode is consistent for same object
+        Position pos = new Position(4, 4);
+        int hash1 = pos.hashCode();
+        int hash2 = pos.hashCode();
+        assertEquals(hash1, hash2);
     }
 
     @Test
     void hashCodeEqualObjects() {
-        // Test hashcode is same for equal objects
+        Position p1 = new Position(1, 6);
+        Position p2 = new Position(1, 6);
+        assertEquals(p1.hashCode(), p2.hashCode());
     }
 
     @Test
     void hashCodeDifferentObjects() {
-        // Test hashcode is different for non-equal objects (best effort)
+        Position p1 = new Position(1, 6);
+        Position p2 = new Position(2, 6);
+        assertNotEquals(p1.hashCode(), p2.hashCode());
     }
 
     @Test
     void testToString() {
-        // Test algebraic notation output, e.g., "a1", "h8"
+        assertEquals("e2", new Position(1, 4).toString());
+        assertEquals("a1", new Position(0, 0).toString());
+        assertEquals("h8", new Position(7, 7).toString());
     }
 
     @Test
     void fromAlgebraicValid() {
-        // Test conversion from valid algebraic notation
+        assertEquals(new Position(0, 0), Position.fromAlgebraic("a1"));
+        assertEquals(new Position(7, 7), Position.fromAlgebraic("h8"));
+        assertEquals(new Position(6, 3), Position.fromAlgebraic("d7"));
     }
 
     @Test
     void fromAlgebraicInvalidFormat() {
-        // Test conversion from invalid format throws exception
+        assertThrows(IllegalArgumentException.class, () -> Position.fromAlgebraic("99"));
+        assertThrows(IllegalArgumentException.class, () -> Position.fromAlgebraic("a"));
+        assertThrows(IllegalArgumentException.class, () -> Position.fromAlgebraic(""));
     }
 
     @Test
     void fromAlgebraicInvalidRank() {
-        // Test conversion from invalid rank throws exception
+        assertThrows(IllegalArgumentException.class, () -> Position.fromAlgebraic("a9"));
+        assertThrows(IllegalArgumentException.class, () -> Position.fromAlgebraic("h0"));
     }
 
     @Test
     void fromAlgebraicInvalidFile() {
-        // Test conversion from invalid file throws exception
+        assertThrows(IllegalArgumentException.class, () -> Position.fromAlgebraic("i2"));
+        assertThrows(IllegalArgumentException.class, () -> Position.fromAlgebraic("z7"));
     }
 }

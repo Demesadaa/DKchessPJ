@@ -1,180 +1,117 @@
 package test.model;
 
-import model.Color;
-import model.Position;
-import model.pieces.*;
-import org.junit.jupiter.api.BeforeEach;
+import model.*;
+import model.pieces.Pawn;
+import model.pieces.Rook;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-class MoveTst {
+public class MoveTst {
 
-    private Position e2, e4, d7, d5, e8, g8;
-    private Piece whitePawn, blackPawn, whiteKing, whiteKnight;
+    @Test
+    public void testBasicMove() {
+        Position start = new Position(1, 0);
+        Position end = new Position(2, 0);
+        Pawn pawn = new Pawn(Color.WHITE);
 
-    @BeforeEach
-    void setUp() {
-        e2 = new Position(1, 4);
-        e4 = new Position(3, 4);
-        d7 = new Position(6, 3);
-        d5 = new Position(4, 3);
-        e8 = new Position(7, 4);
-        g8 = new Position(7, 6);
-        whitePawn = new Pawn(Color.WHITE);
-        blackPawn = new Pawn(Color.BLACK);
-        whiteKing = new King(Color.WHITE);
-        whiteKnight = new Knight(Color.WHITE);
+        Move move = new Move(start, end, pawn, null);
+
+        assertEquals(start, move.getStartPosition());
+        assertEquals(end, move.getEndPosition());
+        assertEquals(pawn, move.getPieceMoved());
+        assertNull(move.getPieceCaptured());
+        assertFalse(move.isCapture());
+        assertFalse(move.isPromotion());
+        assertFalse(move.isCastle());
+        assertFalse(move.isEnPassant());
     }
 
     @Test
-    void constructorSimpleMove() {
-        // Test simple move constructor
+    public void testCaptureMove() {
+        Position start = new Position(1, 0);
+        Position end = new Position(2, 0);
+        Pawn attacker = new Pawn(Color.WHITE);
+        Pawn captured = new Pawn(Color.BLACK);
+
+        Move move = new Move(start, end, attacker, captured);
+
+        assertTrue(move.isCapture());
+        assertEquals(captured, move.getPieceCaptured());
     }
 
     @Test
-    void constructorCaptureMove() {
-        // Test capture move constructor
+    public void testPromotionMove() {
+        Position start = new Position(6, 0);
+        Position end = new Position(7, 0);
+        Pawn pawn = new Pawn(Color.WHITE);
+
+        Move move = new Move(start, end, pawn, null, 'Q');
+
+        assertTrue(move.isPromotion());
+        assertEquals('Q', move.getPromotionChar());
     }
 
     @Test
-    void constructorPromotionMove() {
-        // Test promotion move constructor
+    public void testEnPassantMove() {
+        Position start = new Position(4, 4);
+        Position end = new Position(5, 5);
+        Pawn pawn = new Pawn(Color.WHITE);
+        Pawn capturedPawn = new Pawn(Color.BLACK);
+
+        Move move = new Move(start, end, pawn, capturedPawn, true);
+
+        assertTrue(move.isEnPassant());
+        assertTrue(move.isCapture());
+        assertEquals(capturedPawn, move.getPieceCaptured());
     }
 
     @Test
-    void constructorEnPassantMove() {
-        // Test en passant move constructor
+    public void testCastlingMove() {
+        Position start = new Position(7, 4);
+        Position end = new Position(7, 6);
+        Rook rook = new Rook(Color.WHITE); // assuming you pass king to Move but used Rook for testing
+
+        Move move = new Move(start, end, rook, true);
+
+        assertTrue(move.isCastle());
+        assertFalse(move.isCapture());
     }
 
     @Test
-    void constructorCastleMove() {
-        // Test castling move constructor
+    public void testToStringContainsPromotion() {
+        Position start = new Position(6, 0);
+        Position end = new Position(7, 0);
+        Pawn pawn = new Pawn(Color.WHITE);
+        Move move = new Move(start, end, pawn, null, 'Q');
+
+        String result = move.toString();
+        assertTrue(result.contains("="));
+        assertTrue(result.contains("Q"));
     }
 
     @Test
-    void getStartPosition() {
-        // Test getter
+    public void testToStringContainsEnPassant() {
+        Position start = new Position(4, 4);
+        Position end = new Position(5, 5);
+        Pawn pawn = new Pawn(Color.WHITE);
+        Pawn captured = new Pawn(Color.BLACK);
+
+        Move move = new Move(start, end, pawn, captured, true);
+        String result = move.toString();
+
+        assertTrue(result.contains("EP"));
     }
 
     @Test
-    void getEndPosition() {
-        // Test getter
-    }
+    public void testToStringContainsCastle() {
+        Position start = new Position(7, 4);
+        Position end = new Position(7, 6);
+        Rook rook = new Rook(Color.WHITE);
 
-    @Test
-    void getPieceMoved() {
-        // Test getter
-    }
+        Move move = new Move(start, end, rook, true);
+        String result = move.toString();
 
-    @Test
-    void getPieceCaptured() {
-        // Test getter for capture and non-capture moves
-    }
-
-    @Test
-    void getPromotionChar() {
-        // Test getter for promotion and non-promotion moves
-    }
-
-    @Test
-    void isPromotion() {
-        // Test boolean flag for promotion/non-promotion
-    }
-
-    @Test
-    void isCapture() {
-        // Test boolean flag for capture/non-capture
-    }
-
-    @Test
-    void isCastle() {
-        // Test boolean flag for castle/non-castle
-    }
-
-    @Test
-    void isEnPassant() {
-        // Test boolean flag for en passant/non-en passant
-    }
-
-    // --- CRITICAL TESTS FOR GameSimulator ---
-    @Test
-    void equalsSameObject() {
-        // Test equality with itself
-    }
-
-    @Test
-    void equalsEqualSimpleMoves() {
-        // Test equality of two simple moves with same start/end/promotion
-    }
-
-    @Test
-    void equalsEqualCaptureMoves() {
-        // Test equality of two capture moves with same start/end/promotion (capture piece shouldn't matter for equality check usually)
-    }
-
-    @Test
-    void equalsEqualPromotionMoves() {
-        // Test equality of two promotion moves with same start/end/promotion char
-    }
-
-    @Test
-    void equalsDifferentStart() {
-        // Test inequality based on start position
-    }
-
-    @Test
-    void equalsDifferentEnd() {
-        // Test inequality based on end position
-    }
-
-    @Test
-    void equalsDifferentPromotion() {
-        // Test inequality based on promotion character
-    }
-
-    @Test
-    void equalsNull() {
-        // Test inequality with null
-    }
-
-    @Test
-    void equalsDifferentClass() {
-        // Test inequality with different class
-    }
-
-    @Test
-    void hashCodeConsistent() {
-        // Test consistency
-    }
-
-    @Test
-    void hashCodeEqualObjects() {
-        // Test hash code for equal Move objects
-    }
-    // --- End Critical Tests ---
-
-    @Test
-    void testToStringSimple() {
-        // Test string representation
-    }
-
-    @Test
-    void testToStringCapture() {
-        // Test string representation
-    }
-
-    @Test
-    void testToStringPromotion() {
-        // Test string representation
-    }
-
-    @Test
-    void testToStringCastle() {
-        // Test string representation
-    }
-
-    @Test
-    void testToStringEnPassant() {
-        // Test string representation
+        assertTrue(result.contains("Castle"));
     }
 }

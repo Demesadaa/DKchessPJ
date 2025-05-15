@@ -238,15 +238,25 @@ public class Board {
         Color player = castleMove.getPieceMoved().getColor();
         Position kingStart = castleMove.getStartPosition();
         Position kingEnd = castleMove.getEndPosition();
+
         if (isInCheck(player)) return false;
+
         int rookCol = (kingEnd.getCol() > kingStart.getCol()) ? 7 : 0;
         int step = (kingEnd.getCol() > kingStart.getCol()) ? 1 : -1;
+
         for (int c = kingStart.getCol() + step; c != rookCol; c += step) {
             if (getPiece(new Position(kingStart.getRow(), c)) != null) return false;
         }
 
-        Position intermediateSquare = new Position(kingStart.getRow(), kingStart.getCol() + step);
+        Position intermediateSquare;
+        if (kingEnd.getCol() == 2) {
+            intermediateSquare = new Position(kingStart.getRow(), 3);
+        } else {
+            intermediateSquare = new Position(kingStart.getRow(), 5);
+        }
+
         if (isSquareAttacked(intermediateSquare, player.opposite())) return false;
+
         if (player == Color.WHITE) {
             if (rookCol == 7 && !whiteKingSideCastle) return false;
             if (rookCol == 0 && !whiteQueenSideCastle) return false;
@@ -254,8 +264,10 @@ public class Board {
             if (rookCol == 7 && !blackKingSideCastle) return false;
             if (rookCol == 0 && !blackQueenSideCastle) return false;
         }
+
         return true;
     }
+
 
     public Board copy() {
         Board newBoard = new Board();

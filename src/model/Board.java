@@ -4,7 +4,6 @@ import model.pieces.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Board {
     private final Piece[][] squares;
     private Color currentPlayer;
@@ -20,41 +19,27 @@ public class Board {
         squares = new Piece[8][8];
         initialize();
     }
-    public void initialize() {
 
+    public void initialize() {
         for (int r = 0; r < 8; r++) {
             for (int c = 0; c < 8; c++) {
                 squares[r][c] = null;
             }
         }
-
-
         for (int c = 0; c < 8; c++) {
             squares[1][c] = new Pawn(Color.WHITE);
             squares[6][c] = new Pawn(Color.BLACK);
         }
-
-
         squares[0][0] = new Rook(Color.WHITE); squares[0][7] = new Rook(Color.WHITE);
         squares[7][0] = new Rook(Color.BLACK); squares[7][7] = new Rook(Color.BLACK);
-
-
         squares[0][1] = new Knight(Color.WHITE); squares[0][6] = new Knight(Color.WHITE);
         squares[7][1] = new Knight(Color.BLACK); squares[7][6] = new Knight(Color.BLACK);
-
-
         squares[0][2] = new Bishop(Color.WHITE); squares[0][5] = new Bishop(Color.WHITE);
         squares[7][2] = new Bishop(Color.BLACK); squares[7][5] = new Bishop(Color.BLACK);
-
-
         squares[0][3] = new Queen(Color.WHITE);
         squares[7][3] = new Queen(Color.BLACK);
-
-
         squares[0][4] = new King(Color.WHITE);
         squares[7][4] = new King(Color.BLACK);
-
-
         currentPlayer = Color.WHITE;
         whiteKingSideCastle = true;
         whiteQueenSideCastle = true;
@@ -86,11 +71,11 @@ public class Board {
     public static boolean isValid(int row, int col) {
         return row >= 0 && row <= 7 && col >= 0 && col <= 7;
     }
+
     public void makeMove(Move move) {
         Position start = move.getStartPosition();
         Position end = move.getEndPosition();
         Piece movedPiece = move.getPieceMoved();
-
         setPiece(start, null);
 
         if (move.isPromotion()) {
@@ -112,8 +97,7 @@ public class Board {
             int capturedPawnRow = start.getRow();
             int capturedPawnCol = end.getCol();
             setPiece(new Position(capturedPawnRow, capturedPawnCol), null);
-        }
-        else {
+        } else {
             setPiece(end, movedPiece);
         }
 
@@ -123,6 +107,7 @@ public class Board {
             int targetRow = (start.getRow() + end.getRow()) / 2;
             enPassantTarget = new Position(targetRow, start.getCol());
         }
+
         if (movedPiece instanceof King) {
             if (movedPiece.getColor() == Color.WHITE) {
                 whiteKingSideCastle = false;
@@ -140,18 +125,21 @@ public class Board {
                 if (start.equals(new Position(7, 7))) blackKingSideCastle = false;
             }
         }
+
         Piece captured = move.getPieceCaptured();
         if (captured instanceof Rook) {
-            if (end.equals(new Position(0, 0))) whiteQueenSideCastle = false; // White QS Rook captured on a1
-            if (end.equals(new Position(0, 7))) whiteKingSideCastle = false; // White KS Rook captured on h1
-            if (end.equals(new Position(7, 0))) blackQueenSideCastle = false; // Black QS Rook captured on a8
-            if (end.equals(new Position(7, 7))) blackKingSideCastle = false; // Black KS Rook captured on h8
+            if (end.equals(new Position(0, 0))) whiteQueenSideCastle = false;
+            if (end.equals(new Position(0, 7))) whiteKingSideCastle = false;
+            if (end.equals(new Position(7, 0))) blackQueenSideCastle = false;
+            if (end.equals(new Position(7, 7))) blackKingSideCastle = false;
         }
+
         if (movedPiece instanceof Pawn || move.isCapture()) {
             halfMoveClock = 0;
         } else {
             halfMoveClock++;
         }
+
         if (currentPlayer == Color.BLACK) {
             fullMoveNumber++;
         }
@@ -185,8 +173,8 @@ public class Board {
                     } else {
                         if (p.isValidMove(this, currentPos, target)) {
                             List<Move> moves = p.getPseudoLegalMoves(this, currentPos);
-                            for(Move m : moves) {
-                                if(m.getEndPosition().equals(target)) return true;
+                            for (Move m : moves) {
+                                if (m.getEndPosition().equals(target)) return true;
                             }
                         }
                     }
@@ -195,7 +183,6 @@ public class Board {
         }
         return false;
     }
-
 
     public Position findKing(Color kingColor) {
         for (int r = 0; r < 8; r++) {
@@ -267,8 +254,6 @@ public class Board {
             if (rookCol == 7 && !blackKingSideCastle) return false;
             if (rookCol == 0 && !blackQueenSideCastle) return false;
         }
-
-
         return true;
     }
 
@@ -294,7 +279,6 @@ public class Board {
     public boolean canWhiteQueenSideCastle() { return whiteQueenSideCastle; }
     public boolean canBlackKingSideCastle() { return blackKingSideCastle; }
     public boolean canBlackQueenSideCastle() { return blackQueenSideCastle; }
-
 
     @Override
     public String toString() {
